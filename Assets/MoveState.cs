@@ -23,10 +23,17 @@ public class MoveState : IState
 
     public void OnUpdate()
     {
-        if(!Walk())
+        if (Input.GetMouseButtonDown(0))
+        {
+            player.SetState(new AttackState());
+        }
+
+        if (!Walk())
         {
             player.SetState(new IdleState());
         }
+
+        
     }
 
     public void OnExit()

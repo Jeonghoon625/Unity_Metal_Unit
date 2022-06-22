@@ -19,6 +19,13 @@ public class IdleState : IState
         {
             player.SetState(new MoveState());
         }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Debug.Log("Attack"); 
+            player.SetState(new AttackState());
+        }
+
     }
 
     public void OnExit()

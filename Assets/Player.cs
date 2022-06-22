@@ -52,4 +52,6 @@ public class Player : MonoBehaviour
         currentState = nextState;
         currentState.OnEnter(this);
     }
+
+   
 }
