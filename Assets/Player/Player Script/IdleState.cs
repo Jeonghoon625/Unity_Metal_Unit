@@ -15,21 +15,23 @@ public class IdleState : IState
 
     public void OnUpdate()
     {
-        if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetButtonDown("Jump"))
+        
+        if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
         {
-            player.SetState(new MoveState());
+            player.SetState("MoveState");
+            
         }
 
+        /*
         if (Input.GetMouseButtonDown(0))
-        {
-            Debug.Log("Attack"); 
-            player.SetState(new AttackState());
+        {            
+            player.SetState("AttackState");
         }
-
+        */
     }
 
     public void OnExit()
     {
-
+        player.prevState = "IdleState";
     }  
 }

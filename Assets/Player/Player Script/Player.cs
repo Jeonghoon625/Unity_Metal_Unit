@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private PlayerState playerState;
+    public Dictionary<string, IState> stateMap;
 
-    private IState currentState;
-
+    public IState currentState;
+    public string prevState;
+    
     [SerializeField]
     [Range(1f, 10f)]
     float walkSpeed = 3f;
@@ -34,7 +35,20 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
-        SetState(new IdleState());
+        stateMap = new Dictionary<string, IState>();
+
+        string stateName;
+
+        stateName = "IdleState";
+        stateMap.Add(stateName, new IdleState());
+
+        stateName = "MoveState";
+        stateMap.Add(stateName, new MoveState());
+
+        stateName = "AttackState";
+        stateMap.Add(stateName, new AttackState());
+
+        SetState("IdleState");
     }
 
     private void Update()
@@ -42,16 +56,16 @@ public class Player : MonoBehaviour
         currentState.OnUpdate();
     }
 
-    public void SetState(IState nextState)
+    public void SetState(string stateName)
     {
         if (currentState != null)
         {
             currentState.OnExit();
         }
 
+        IState nextState = stateMap[stateName];
         currentState = nextState;
         currentState.OnEnter(this);
+        currentState.OnUpdate();
     }
-
-   
 }

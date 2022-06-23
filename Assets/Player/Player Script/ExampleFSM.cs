@@ -11,7 +11,7 @@ public enum PlayerState
     Fall,
 }
 
-public class PlayerFSM : MonoBehaviour
+public class ExampleFSM : MonoBehaviour
 {
     private PlayerState playerState;
 

@@ -46,7 +46,7 @@ public class AttackState : IState
         {
             if (!(Input.GetMouseButtonDown(0)))
             {
-                player.SetState(new IdleState());
+                player.SetState("AttackState");
             }
         }
     }
