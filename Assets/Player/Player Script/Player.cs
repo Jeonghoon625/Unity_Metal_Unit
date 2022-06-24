@@ -10,8 +10,8 @@ public class Player : MonoBehaviour
     public string prevState;
     
     [SerializeField]
-    [Range(1f, 10f)]
-    float walkSpeed = 3f;
+    [Range(0f, 10f)]
+    float walkSpeed = 0.5f;
 
     [SerializeField]
     [Range(1f, 10f)]
@@ -50,11 +50,18 @@ public class Player : MonoBehaviour
 
         SetState("IdleState");
     }
-
     private void Update()
     {
         currentState.OnUpdate();
     }
+
+    private void FixedUpdate()
+    {
+        currentState.OnFixedUpdate();
+    }
+
+    
+
 
     public void SetState(string stateName)
     {

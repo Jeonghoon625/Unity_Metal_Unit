@@ -33,5 +33,10 @@ public class IdleState : IState
     public void OnExit()
     {
         player.prevState = "IdleState";
-    }  
+    }
+
+    public void OnFixedUpdate()
+    {
+
+    }
 }

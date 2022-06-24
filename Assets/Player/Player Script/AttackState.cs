@@ -62,6 +62,10 @@ public class AttackState : IState
         animator.SetTrigger("Atk");
     }
 
+    public void OnFixedUpdate()
+    {
+    }
+
     /*
     public IEnumerator timer()
     {

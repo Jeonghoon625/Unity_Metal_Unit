@@ -23,6 +23,8 @@ public class MoveState : IState
     private float jumpTimeLimit = 0.1f;
     private float jumpTimer = 0;
 
+    private float axisX = 0;
+
     public void OnEnter(Player player)
     {
         this.player = player;
@@ -37,28 +39,7 @@ public class MoveState : IState
 
     public void OnUpdate()
     {
-        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Platform"));
-        Debug.DrawRay(rigid.position, Vector3.down, new Color(1, 1, 1));
-        Debug.Log(rigid.velocity.y);
-
-        if (rayHit.collider != null)
-        {
-            if (rayHit.distance < 0.6f)
-            {
-                isGround = true;
-            }
-            else
-            {
-                isGround = false;
-            }
-        }
-
-        if (!isWalk && !isJump && !isFall)
-        {
-            player.StopCoroutine(coWalk);
-            player.StopCoroutine(coJump);
-            player.SetState("IdleState");
-        }
+        
 
         /*
         if (Input.GetMouseButtonDown(0))
@@ -66,6 +47,31 @@ public class MoveState : IState
             player.SetState("AttackState");
         }
         */
+    }
+
+    public void OnFixedUpdate()
+    {
+        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1.1f, LayerMask.GetMask("Platform"));
+        Debug.DrawRay(rigid.position, Vector3.down * 1.1f, new Color(1, 1, 1));
+
+        if (rayHit.collider != null)
+        {
+            isGround = true;
+
+        }
+        else
+        {
+            isGround = false;
+        }
+
+        playerGO.transform.position += Vector3.right * axisX * player.WalkSpeed * Time.deltaTime;
+
+        if (!isWalk && !isJump && !isFall)
+        {
+            player.StopCoroutine(coWalk);
+            player.StopCoroutine(coJump);
+            player.SetState("IdleState");
+        }
     }
 
     public void OnExit()
@@ -77,7 +83,7 @@ public class MoveState : IState
     {
         while(true)
         {
-            var axisX = Input.GetAxisRaw("Horizontal");
+            axisX = Input.GetAxisRaw("Horizontal");
 
             if (axisX != 0)
             {
@@ -85,15 +91,15 @@ public class MoveState : IState
                 animator.SetBool("isWalk", true);
 
                 spriteRenderer.flipX = axisX < 0 ? true : false;
-
-                playerGO.transform.Translate(axisX * player.WalkSpeed * Time.deltaTime, 0f, 0f);
-            } 
+            }
             else
             {
                 isWalk = false;
                 animator.SetBool("isWalk", false);
             }
+
            
+
             yield return null;
         }
     }
@@ -109,6 +115,7 @@ public class MoveState : IState
                 rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
             }
 
+            
             if(rigid.velocity.y <= 0f)
             {
                 isJump = false;
@@ -125,7 +132,7 @@ public class MoveState : IState
                     animator.SetBool("isFall", false);
                 }
             }
-       
+            
             yield return null;
         }
     }

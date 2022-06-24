@@ -6,5 +6,7 @@ public interface IState
 {
     void OnEnter(Player player);
     void OnUpdate();
+
+    void OnFixedUpdate();
     void OnExit();
 }
