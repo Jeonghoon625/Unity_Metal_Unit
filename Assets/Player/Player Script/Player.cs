@@ -8,14 +8,18 @@ public class Player : MonoBehaviour
 
     public IState currentState;
     public string prevState;
-    
+
+    public GameObject Effect_JumpOnGround_Prefab;
+    public GameObject Effect_JumpOnAir_Prefab;
+    public GameObject EffectPos_Jump;
+
     [SerializeField]
     [Range(0f, 10f)]
     float walkSpeed = 0.5f;
 
     [SerializeField]
-    [Range(1f, 10f)]
-    float jumpPower = 3f;
+    [Range(0f, 10f)]
+    float jumpPower = 0.3f;
 
     public float WalkSpeed
     {
@@ -59,9 +63,6 @@ public class Player : MonoBehaviour
     {
         currentState.OnFixedUpdate();
     }
-
-    
-
 
     public void SetState(string stateName)
     {

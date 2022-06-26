@@ -10,6 +10,9 @@ public class MoveState : IState
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D rigid;
 
+    private RaycastHit2D[] rayHits = new RaycastHit2D[3];
+    private Collider2D playerCol;
+
     bool isWalk = false;
     bool isJump = false;
     bool isFall = false;
@@ -18,10 +21,9 @@ public class MoveState : IState
     Coroutine coWalk;
     Coroutine coJump;
 
-    private float jumpPower = 6f;
-
-    private float jumpTimeLimit = 0.1f;
+    private float jumpTimeLimit = 0.5f;
     private float jumpTimer = 0;
+    private int jumpCount = 0;
 
     private float axisX = 0;
 
@@ -32,6 +34,7 @@ public class MoveState : IState
         animator = playerGO.GetComponent<Animator>();
         spriteRenderer = playerGO.GetComponent<SpriteRenderer>();
         rigid = playerGO.GetComponent<Rigidbody2D>();
+        playerCol = playerGO.GetComponent<BoxCollider2D>();
 
         coWalk = player.StartCoroutine(Walk());
         coJump = player.StartCoroutine(Jump());
@@ -39,8 +42,6 @@ public class MoveState : IState
 
     public void OnUpdate()
     {
-        
-
         /*
         if (Input.GetMouseButtonDown(0))
         {
@@ -51,25 +52,58 @@ public class MoveState : IState
 
     public void OnFixedUpdate()
     {
-        RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1.1f, LayerMask.GetMask("Platform"));
-        Debug.DrawRay(rigid.position, Vector3.down * 1.1f, new Color(1, 1, 1));
+        //¶¥Ã¼Å©
+        rayHits[0] = Physics2D.Raycast(new Vector3(rigid.position.x - (playerCol.bounds.size.x / 2), rigid.position.y, 0), Vector3.down, 1.1f, LayerMask.GetMask("Platform"));
+        Debug.DrawRay(new Vector3(rigid.position.x - (playerCol.bounds.size.x / 3), rigid.position.y, 0), Vector3.down * 1.1f, new Color(1, 1, 1));
 
-        if (rayHit.collider != null)
+        rayHits[1] = Physics2D.Raycast(new Vector3(rigid.position.x, rigid.position.y, 0), Vector3.down, 1.6f, LayerMask.GetMask("Platform"));
+        Debug.DrawRay(new Vector3(rigid.position.x, rigid.position.y, 0), Vector3.down * 1.1f, new Color(1, 1, 1));
+
+        rayHits[2] = Physics2D.Raycast(new Vector3(rigid.position.x + (playerCol.bounds.size.x / 2), rigid.position.y, 0), Vector3.down, 1.6f, LayerMask.GetMask("Platform"));
+        Debug.DrawRay(new Vector3(rigid.position.x + (playerCol.bounds.size.x / 3), rigid.position.y, 0), Vector3.down * 1.1f, new Color(1, 1, 1));
+
+        foreach(var rayHit in rayHits)
         {
-            isGround = true;
-
+            if (rayHit.collider != null)
+            {
+                isGround = true;
+                break;
+            }
+            else
+            {
+                isGround = false;
+            }
         }
-        else
-        {
-            isGround = false;
-        }
 
+        //°È±â
         playerGO.transform.position += Vector3.right * axisX * player.WalkSpeed * Time.deltaTime;
+
+        if (rigid.velocity.y < 0f)
+        {
+            isJump = false;
+            animator.SetBool("isJump", false);
+
+            isWalk = false;
+            animator.SetBool("isWalk", false);
+
+            if (!isGround)
+            {
+                isFall = true;
+                animator.SetBool("isFall", true);
+            }
+            else
+            {
+                jumpCount = 0;
+                isFall = false;
+                animator.SetBool("isFall", false);
+            }
+        }
 
         if (!isWalk && !isJump && !isFall)
         {
             player.StopCoroutine(coWalk);
             player.StopCoroutine(coJump);
+
             player.SetState("IdleState");
         }
     }
@@ -98,8 +132,6 @@ public class MoveState : IState
                 animator.SetBool("isWalk", false);
             }
 
-           
-
             yield return null;
         }
     }
@@ -108,55 +140,39 @@ public class MoveState : IState
     {
         while (true)
         {
+            /*
             if(Input.GetButtonDown("Jump"))
             {
                 isJump = true;
                 animator.SetBool("isJump", true);
-                rigid.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+                rigid.AddForce(Vector2.up * player.JumpPower, ForceMode2D.Impulse);
             }
-
-            
-            if(rigid.velocity.y <= 0f)
+            */
+            if(Input.GetButtonDown("Jump"))
             {
-                isJump = false;
-                animator.SetBool("isJump", false);
+                jumpTimer = 0;
+                jumpCount--;
+                isJump = true;
+                animator.SetBool("isJump", true);
 
-                if (!isGround)
+                if(jumpCount == -1)
                 {
-                    isFall = true;
-                    animator.SetBool("isFall", true);
+                    GameObject.Instantiate(player.Effect_JumpOnGround_Prefab, player.EffectPos_Jump.transform.position, Quaternion.identity);
                 }
-                else
+                else if(jumpCount == -2)
                 {
-                    isFall = false;
-                    animator.SetBool("isFall", false);
+                    GameObject.Instantiate(player.Effect_JumpOnAir_Prefab, player.EffectPos_Jump.transform.position, Quaternion.identity);
                 }
+
             }
-            
-            yield return null;
-        }
-    }
 
-    IEnumerator Fall()
-    {
-        while (true)
-        {
-            if (rigid.velocity.y < 0f)
+            if (Input.GetButton("Jump") && jumpTimer <= jumpTimeLimit && jumpCount >= -2)
             {
-                isJump = false;
-                animator.SetBool("isJump", false);
-
-                if (!isGround)
-                {
-                    isFall = true;
-                    animator.SetBool("isFall", true);
-                }
-                else
-                {
-                    isFall = false;
-                    animator.SetBool("isFall", false);
-                }
+                rigid.velocity = Vector2.zero;
+                rigid.AddForce(Vector2.up * player.JumpPower, ForceMode2D.Impulse);
             }
+
+            jumpTimer += Time.deltaTime;
 
             yield return null;
         }
