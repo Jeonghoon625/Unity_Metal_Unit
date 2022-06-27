@@ -8,7 +8,6 @@ public class IdleState : IState
     private Animator animator;
     private Rigidbody2D rb;
 
-
     public void OnEnter(Player player)
     {
         this.player = player;
@@ -25,13 +24,11 @@ public class IdleState : IState
         {
             player.SetState("MoveState");
         }
-
-        /*
+        
         if (Input.GetMouseButtonDown(0))
-        {            
+        {
             player.SetState("AttackState");
         }
-        */
     }
 
     public void OnExit()

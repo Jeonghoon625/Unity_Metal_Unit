@@ -84,19 +84,18 @@ public class MoveState : IState
             }
         }
 
-        if(!isDash) //°È±â
+        if (!isDash && isWalk) //°È±â
         {
             playerGO.transform.position += Vector3.right * axisX * player.WalkSpeed * Time.deltaTime;
         }
-
-        else //´ë½¬
+        else if(isDash)//´ë½¬
         {
             playerGO.transform.position += direction * 1.5f * player.WalkSpeed * Time.deltaTime;
             playerGO.transform.position =  new Vector3(playerGO.transform.position.x, dashY, 0);
         }
 
         //³«ÇÏ
-        if (rigid.velocity.y <= 0f)
+        if (rigid.velocity.y < 0f)
         {
             isJump = false;
             animator.SetBool("isJump", false);
@@ -111,13 +110,12 @@ public class MoveState : IState
             }
             else
             {
+                Debug.Log("ÂøÁö");
                 jumpCount = 0;
                 isFall = false;
                 animator.SetBool("isFall", false);
             }
         }
-
-        
 
         if (!isWalk && !isJump && !isFall && !isDash)
         {
@@ -213,7 +211,6 @@ public class MoveState : IState
                 {
                     GameObject.Instantiate(player.Effect_JumpOnAir_Prefab, player.EffectPos_Jump.transform.position, Quaternion.identity);
                 }
-
             }
 
             if (Input.GetButton("Jump") && jumpTimer <= jumpTimeLimit && jumpCount >= -2)

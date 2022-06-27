@@ -15,6 +15,8 @@ public class Player : MonoBehaviour
 
     public GameObject Effect_Walk;
 
+    public GameObject ClosedWeapon;
+
     [SerializeField]
     [Range(0f, 10f)]
     float walkSpeed = 0.5f;
@@ -76,7 +78,6 @@ public class Player : MonoBehaviour
         IState nextState = stateMap[stateName];
         currentState = nextState;
         currentState.OnEnter(this);
-        
         currentState.OnUpdate();
     }
 }

@@ -26,6 +26,7 @@ public class AttackState : IState
         //player.StartCoroutine(timer());
         //atkNum = 0;
         animator.SetTrigger("Atk");
+        animator.SetBool("isAttack", true);
     }
 
     public void OnUpdate()
@@ -40,13 +41,13 @@ public class AttackState : IState
                 animator.SetTrigger("Combo");
                 curTime = 0;
             }
-            
+
         }
         else
         {
             if (!(Input.GetMouseButtonDown(0)))
             {
-                player.SetState("AttackState");
+                player.SetState("IdleState");
             }
         }
     }
@@ -56,6 +57,7 @@ public class AttackState : IState
         animator.SetBool("isAttack", false);
     }
 
+
     public void PlayAnimation(int atkNum)
     {
         animator.SetFloat("Blend", atkNum);
@@ -64,6 +66,7 @@ public class AttackState : IState
 
     public void OnFixedUpdate()
     {
+        
     }
 
     /*
@@ -84,7 +87,6 @@ public class AttackState : IState
             yield return null;
         }
     }
-
     public void SetAtk()
     {
         player.StartCoroutine();
