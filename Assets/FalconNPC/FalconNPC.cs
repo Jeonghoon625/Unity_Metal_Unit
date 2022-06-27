@@ -33,13 +33,11 @@ public class FalconNPC : MonoBehaviour
         if (hInput < 0)
         {
             dirX = Vector3.left;
-            Debug.Log("left");
             spriteRenderer.flipX = true;
         }
         else if (hInput > 0)
         {
             dirX = Vector3.right;
-            Debug.Log("right");
             spriteRenderer.flipX = false;
         }
 

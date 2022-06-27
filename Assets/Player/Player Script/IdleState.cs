@@ -6,20 +6,24 @@ public class IdleState : IState
 {
     private Player player;
     private Animator animator;
+    private Rigidbody2D rb;
+
 
     public void OnEnter(Player player)
     {
         this.player = player;
+
         animator = player.gameObject.GetComponent<Animator>();
+        rb = player.GetComponent<Rigidbody2D>();
     }
 
     public void OnUpdate()
     {
-        
-        if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+        if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetButtonDown("Jump") 
+            || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift) 
+            || rb.velocity.y < 0 || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
         {
             player.SetState("MoveState");
-            
         }
 
         /*

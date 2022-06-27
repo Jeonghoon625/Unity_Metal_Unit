@@ -17,15 +17,23 @@ public class MoveState : IState
     bool isJump = false;
     bool isFall = false;
     bool isGround = false;
+    bool isDash = false;
 
     Coroutine coWalk;
     Coroutine coJump;
+    Coroutine coDash;
 
     private float jumpTimeLimit = 0.5f;
-    private float jumpTimer = 0;
+    private float jumpTimer = 0f;
     private int jumpCount = 0;
 
+    private float dashTimeLimit = 0.3f;
+    private float dashTimer = 0f;
+
     private float axisX = 0;
+
+    private Vector3 direction;
+    private float dashY = 0f;
 
     public void OnEnter(Player player)
     {
@@ -38,6 +46,7 @@ public class MoveState : IState
 
         coWalk = player.StartCoroutine(Walk());
         coJump = player.StartCoroutine(Jump());
+        coDash = player.StartCoroutine(Dash());
     }
 
     public void OnUpdate()
@@ -52,7 +61,7 @@ public class MoveState : IState
 
     public void OnFixedUpdate()
     {
-        //¶¥Ã¼Å©
+        //¶¥ Ã¼Å©
         rayHits[0] = Physics2D.Raycast(new Vector3(rigid.position.x - (playerCol.bounds.size.x / 2), rigid.position.y, 0), Vector3.down, 1.1f, LayerMask.GetMask("Platform"));
         Debug.DrawRay(new Vector3(rigid.position.x - (playerCol.bounds.size.x / 3), rigid.position.y, 0), Vector3.down * 1.1f, new Color(1, 1, 1));
 
@@ -62,7 +71,7 @@ public class MoveState : IState
         rayHits[2] = Physics2D.Raycast(new Vector3(rigid.position.x + (playerCol.bounds.size.x / 2), rigid.position.y, 0), Vector3.down, 1.6f, LayerMask.GetMask("Platform"));
         Debug.DrawRay(new Vector3(rigid.position.x + (playerCol.bounds.size.x / 3), rigid.position.y, 0), Vector3.down * 1.1f, new Color(1, 1, 1));
 
-        foreach(var rayHit in rayHits)
+        foreach (var rayHit in rayHits)
         {
             if (rayHit.collider != null)
             {
@@ -75,10 +84,19 @@ public class MoveState : IState
             }
         }
 
-        //°È±â
-        playerGO.transform.position += Vector3.right * axisX * player.WalkSpeed * Time.deltaTime;
+        if(!isDash) //°È±â
+        {
+            playerGO.transform.position += Vector3.right * axisX * player.WalkSpeed * Time.deltaTime;
+        }
 
-        if (rigid.velocity.y < 0f)
+        else //´ë½¬
+        {
+            playerGO.transform.position += direction * 1.5f * player.WalkSpeed * Time.deltaTime;
+            playerGO.transform.position =  new Vector3(playerGO.transform.position.x, dashY, 0);
+        }
+
+        //³«ÇÏ
+        if (rigid.velocity.y <= 0f)
         {
             isJump = false;
             animator.SetBool("isJump", false);
@@ -99,11 +117,14 @@ public class MoveState : IState
             }
         }
 
-        if (!isWalk && !isJump && !isFall)
+        
+
+        if (!isWalk && !isJump && !isFall && !isDash)
         {
             player.StopCoroutine(coWalk);
             player.StopCoroutine(coJump);
-
+            player.StopCoroutine(coDash);
+            animator.SetBool("isGround", true);
             player.SetState("IdleState");
         }
     }
@@ -115,7 +136,7 @@ public class MoveState : IState
 
     IEnumerator Walk()
     {
-        while(true)
+        while (true)
         {
             axisX = Input.GetAxisRaw("Horizontal");
 
@@ -124,7 +145,7 @@ public class MoveState : IState
                 isWalk = true;
                 animator.SetBool("isWalk", true);
 
-                spriteRenderer.flipX = axisX < 0 ? true : false;
+                spriteRenderer.flipX = axisX < 0;
             }
             else
             {
@@ -136,30 +157,59 @@ public class MoveState : IState
         }
     }
 
+    IEnumerator Dash()
+    {
+        while (true)
+        {
+            if (Input.GetKeyDown(KeyCode.LeftShift) && !isDash)
+            {
+                isDash = true;
+
+                direction = Vector3.right;
+                dashY = playerGO.transform.position.y;
+
+                if (spriteRenderer.flipX)
+                {
+                    direction = Vector3.left;
+                }
+
+                rigid.velocity = Vector2.zero;
+            }
+
+            if(isDash)
+            {
+                dashTimer += Time.deltaTime;
+
+                animator.SetBool("isDash", true);
+
+                if (dashTimer > dashTimeLimit)
+                {
+                    animator.SetBool("isDash", false);
+                    isDash = false;
+                    dashTimer = 0;
+                }
+            }
+            
+            yield return null;
+        }
+    }
+
     IEnumerator Jump()
     {
         while (true)
         {
-            /*
-            if(Input.GetButtonDown("Jump"))
-            {
-                isJump = true;
-                animator.SetBool("isJump", true);
-                rigid.AddForce(Vector2.up * player.JumpPower, ForceMode2D.Impulse);
-            }
-            */
-            if(Input.GetButtonDown("Jump"))
+            if (Input.GetButtonDown("Jump"))
             {
                 jumpTimer = 0;
                 jumpCount--;
                 isJump = true;
                 animator.SetBool("isJump", true);
 
-                if(jumpCount == -1)
+                if (jumpCount == -1 && isGround)
                 {
                     GameObject.Instantiate(player.Effect_JumpOnGround_Prefab, player.EffectPos_Jump.transform.position, Quaternion.identity);
                 }
-                else if(jumpCount == -2)
+                else if (jumpCount == -2)
                 {
                     GameObject.Instantiate(player.Effect_JumpOnAir_Prefab, player.EffectPos_Jump.transform.position, Quaternion.identity);
                 }
@@ -177,14 +227,4 @@ public class MoveState : IState
             yield return null;
         }
     }
-
-    /*
-    void OnCollisionEnter2D(Collision2D col)
-    {
-        if (col.gameObject.tag == "Platform")
-        {
-            isGround = true;
-        }
-    }
-    */
 }

@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
     public GameObject Effect_JumpOnAir_Prefab;
     public GameObject EffectPos_Jump;
 
+    public GameObject Effect_Walk;
+
     [SerializeField]
     [Range(0f, 10f)]
     float walkSpeed = 0.5f;
@@ -74,6 +76,7 @@ public class Player : MonoBehaviour
         IState nextState = stateMap[stateName];
         currentState = nextState;
         currentState.OnEnter(this);
+        
         currentState.OnUpdate();
     }
 }
