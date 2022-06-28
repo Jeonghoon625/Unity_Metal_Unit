@@ -18,15 +18,14 @@ public class AttackState : IState
 
     public void OnEnter(Player player)
     {
+        curTime = 0f;
         this.player = player;
         playerGO = player.gameObject;
         animator = playerGO.GetComponent<Animator>();
         spriteRenderer = playerGO.GetComponent<SpriteRenderer>();
-
-        //player.StartCoroutine(timer());
-        //atkNum = 0;
-        animator.SetTrigger("Atk");
         animator.SetBool("isAttack", true);
+        player.Gun.SetActive(true);
+        player.Gun.SendMessage("Fire");
     }
 
     public void OnUpdate()
@@ -34,62 +33,24 @@ public class AttackState : IState
         if (curTime < coolTime)
         {
             curTime += Time.deltaTime;
-
-            if (Input.GetMouseButtonDown(0))
-            {
-                Debug.Log("Combo");
-                animator.SetTrigger("Combo");
-                curTime = 0;
-            }
-
         }
+        
         else
         {
-            if (!(Input.GetMouseButtonDown(0)))
-            {
-                player.SetState("IdleState");
-            }
+            animator.SetBool("isAttack", false);
+            player.Gun.SetActive(false);
+            player.SetState(player.prevState);  
         }
     }
 
     public void OnExit()
     {
         animator.SetBool("isAttack", false);
-    }
-
-
-    public void PlayAnimation(int atkNum)
-    {
-        animator.SetFloat("Blend", atkNum);
-        animator.SetTrigger("Atk");
+        player.prevState = "AttackState";
     }
 
     public void OnFixedUpdate()
     {
         
     }
-
-    /*
-    public IEnumerator timer()
-    {
-        while (true)
-        {
-            if (currentTime < coolTime)
-            {
-                currentTime += Time.deltaTime;
-                ableCombo = true;
-            }
-            else
-            {
-                currentTime = 0;
-                ableCombo = false;
-            }
-            yield return null;
-        }
-    }
-    public void SetAtk()
-    {
-        player.StartCoroutine();
-    }
-    */
 }

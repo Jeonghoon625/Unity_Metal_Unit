@@ -14,6 +14,7 @@ public class IdleState : IState
 
         animator = player.gameObject.GetComponent<Animator>();
         rb = player.GetComponent<Rigidbody2D>();
+        Debug.Log("Idle");
     }
 
     public void OnUpdate()
@@ -25,9 +26,9 @@ public class IdleState : IState
             player.SetState("MoveState");
         }
         
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(1))
         {
-            player.SetState("AttackState");
+           player.SetState("AttackState");
         }
     }
 

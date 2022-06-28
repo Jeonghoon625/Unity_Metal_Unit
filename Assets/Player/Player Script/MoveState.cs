@@ -51,12 +51,14 @@ public class MoveState : IState
 
     public void OnUpdate()
     {
-        /*
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(1))
         {
+            player.StopCoroutine(coWalk);
+            player.StopCoroutine(coJump);
+            player.StopCoroutine(coDash);
+            animator.SetBool("isGround", true);
             player.SetState("AttackState");
         }
-        */
     }
 
     public void OnFixedUpdate()
@@ -86,6 +88,7 @@ public class MoveState : IState
 
         if (!isDash && isWalk) //°È±â
         {
+            player.direction = new Vector3(axisX, 0, 0);
             playerGO.transform.position += Vector3.right * axisX * player.WalkSpeed * Time.deltaTime;
         }
         else if(isDash)//´ë½¬
@@ -125,6 +128,8 @@ public class MoveState : IState
             animator.SetBool("isGround", true);
             player.SetState("IdleState");
         }
+
+        
     }
 
     public void OnExit()
@@ -136,6 +141,7 @@ public class MoveState : IState
     {
         while (true)
         {
+            Debug.Log("Walk");
             axisX = Input.GetAxisRaw("Horizontal");
 
             if (axisX != 0)
@@ -169,6 +175,7 @@ public class MoveState : IState
                 if (spriteRenderer.flipX)
                 {
                     direction = Vector3.left;
+                    player.direction = Vector3.left;
                 }
 
                 rigid.velocity = Vector2.zero;

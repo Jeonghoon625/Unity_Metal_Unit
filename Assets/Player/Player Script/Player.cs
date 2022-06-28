@@ -12,10 +12,12 @@ public class Player : MonoBehaviour
     public GameObject Effect_JumpOnGround_Prefab;
     public GameObject Effect_JumpOnAir_Prefab;
     public GameObject EffectPos_Jump;
-
     public GameObject Effect_Walk;
 
     public GameObject ClosedWeapon;
+    public GameObject Gun;
+
+    public Vector3 direction;
 
     [SerializeField]
     [Range(0f, 10f)]
@@ -43,6 +45,8 @@ public class Player : MonoBehaviour
 
     private void Awake()
     {
+        direction = Vector3.right;
+
         stateMap = new Dictionary<string, IState>();
 
         string stateName;
@@ -58,6 +62,7 @@ public class Player : MonoBehaviour
 
         SetState("IdleState");
     }
+
     private void Update()
     {
         currentState.OnUpdate();
