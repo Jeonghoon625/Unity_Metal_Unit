@@ -23,7 +23,7 @@ public class MoveState : IState
     Coroutine coJump;
     Coroutine coDash;
 
-    private float jumpTimeLimit = 0.5f;
+    private float jumpTimeLimit = 0.25f;
     private float jumpTimer = 0f;
     private int jumpCount = 0;
 
@@ -64,14 +64,14 @@ public class MoveState : IState
     public void OnFixedUpdate()
     {
         //땅 체크
-        rayHits[0] = Physics2D.Raycast(new Vector3(rigid.position.x - (playerCol.bounds.size.x / 2), rigid.position.y, 0), Vector3.down, 1.1f, LayerMask.GetMask("Platform"));
-        Debug.DrawRay(new Vector3(rigid.position.x - (playerCol.bounds.size.x / 3), rigid.position.y, 0), Vector3.down * 1.1f, new Color(1, 1, 1));
+        rayHits[0] = Physics2D.Raycast(new Vector3(rigid.position.x - (playerCol.bounds.size.x / 2), rigid.position.y - (playerCol.bounds.size.y / 2), 0), Vector3.down, 0.2f, LayerMask.GetMask("Platform"));
+        Debug.DrawRay(new Vector3(rigid.position.x - (playerCol.bounds.size.x / 3), rigid.position.y - (playerCol.bounds.size.y / 2), 0), Vector3.down * 0.2f, new Color(1, 1, 1));
 
-        rayHits[1] = Physics2D.Raycast(new Vector3(rigid.position.x, rigid.position.y, 0), Vector3.down, 1.6f, LayerMask.GetMask("Platform"));
-        Debug.DrawRay(new Vector3(rigid.position.x, rigid.position.y, 0), Vector3.down * 1.1f, new Color(1, 1, 1));
+        rayHits[1] = Physics2D.Raycast(new Vector3(rigid.position.x, rigid.position.y - (playerCol.bounds.size.y / 2), 0), Vector3.down, 0.2f, LayerMask.GetMask("Platform"));
+        Debug.DrawRay(new Vector3(rigid.position.x, rigid.position.y - (playerCol.bounds.size.y / 2), 0), Vector3.down * 0.2f, new Color(1, 1, 1));
 
-        rayHits[2] = Physics2D.Raycast(new Vector3(rigid.position.x + (playerCol.bounds.size.x / 2), rigid.position.y, 0), Vector3.down, 1.6f, LayerMask.GetMask("Platform"));
-        Debug.DrawRay(new Vector3(rigid.position.x + (playerCol.bounds.size.x / 3), rigid.position.y, 0), Vector3.down * 1.1f, new Color(1, 1, 1));
+        rayHits[2] = Physics2D.Raycast(new Vector3(rigid.position.x + (playerCol.bounds.size.x / 2), rigid.position.y - (playerCol.bounds.size.y / 2), 0), Vector3.down, 0.2f, LayerMask.GetMask("Platform"));
+        Debug.DrawRay(new Vector3(rigid.position.x + (playerCol.bounds.size.x / 3), rigid.position.y - (playerCol.bounds.size.y / 2), 0), Vector3.down * 0.2f, new Color(1, 1, 1));
 
         foreach (var rayHit in rayHits)
         {
@@ -113,13 +113,22 @@ public class MoveState : IState
             }
             else
             {
-                Debug.Log("착지");
+                jumpCount = 0;
+                isFall = false;
+                animator.SetBool("isFall", false);
+            }
+        }
+        else if (rigid.velocity.y == 0)
+        {
+            if(isGround)
+            {
                 jumpCount = 0;
                 isFall = false;
                 animator.SetBool("isFall", false);
             }
         }
 
+        //움직이지않고있는 상태
         if (!isWalk && !isJump && !isFall && !isDash)
         {
             player.StopCoroutine(coWalk);
@@ -128,8 +137,6 @@ public class MoveState : IState
             animator.SetBool("isGround", true);
             player.SetState("IdleState");
         }
-
-        
     }
 
     public void OnExit()
@@ -141,7 +148,6 @@ public class MoveState : IState
     {
         while (true)
         {
-            Debug.Log("Walk");
             axisX = Input.GetAxisRaw("Horizontal");
 
             if (axisX != 0)

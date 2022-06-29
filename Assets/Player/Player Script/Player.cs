@@ -20,11 +20,9 @@ public class Player : MonoBehaviour
     public Vector3 direction;
 
     [SerializeField]
-    [Range(0f, 10f)]
     float walkSpeed = 0.5f;
 
     [SerializeField]
-    [Range(0f, 10f)]
     float jumpPower = 0.3f;
 
     public float WalkSpeed

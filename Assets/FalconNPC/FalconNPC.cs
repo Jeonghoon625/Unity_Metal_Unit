@@ -44,13 +44,13 @@ public class FalconNPC : MonoBehaviour
         if (dirX == Vector3.right && (transform.position.x != LeftUpPos.position.x))
         {
             var targetPosition = new Vector3(LeftUpPos.position.x, transform.position.y, 0);
-            transform.position = Vector3.Lerp(transform.position, targetPosition, 0.05f);
+            transform.position = Vector3.Lerp(transform.position, targetPosition, 0.075f);
         }
 
         if (dirX == Vector3.left && (transform.position.x != RightUpPos.position.x))
         {
             var targetPosition = new Vector3(RightUpPos.position.x, transform.position.y, 0);
-            transform.position = Vector3.Lerp(transform.position, targetPosition, 0.05f);
+            transform.position = Vector3.Lerp(transform.position, targetPosition, 0.075f);
         }
     }
 

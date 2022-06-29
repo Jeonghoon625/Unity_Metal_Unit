@@ -7,21 +7,23 @@ public class IdleState : IState
     private Player player;
     private Animator animator;
     private Rigidbody2D rb;
+    private SpriteRenderer spriteRenderer;
+    private bool isDown;
 
     public void OnEnter(Player player)
     {
         this.player = player;
 
         animator = player.gameObject.GetComponent<Animator>();
+        spriteRenderer = player.gameObject.GetComponent<SpriteRenderer>();
         rb = player.GetComponent<Rigidbody2D>();
-        Debug.Log("Idle");
     }
 
     public void OnUpdate()
     {
-        if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetButtonDown("Jump") 
+        if (!isDown && (Input.GetAxisRaw("Horizontal") != 0 || Input.GetButtonDown("Jump")
             || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift) 
-            || rb.velocity.y < 0 || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+            || rb.velocity.y < 0 || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift)))
         {
             player.SetState("MoveState");
         }
@@ -30,10 +32,38 @@ public class IdleState : IState
         {
            player.SetState("AttackState");
         }
+
+        if(Input.GetKey(KeyCode.DownArrow))
+        {
+            animator.SetBool("isDown", true);
+            isDown = true;
+
+            if(Input.GetAxisRaw("Horizontal") == -1)
+            {
+                spriteRenderer.flipX = true;
+            }
+            else if (Input.GetAxisRaw("Horizontal") == 1)
+            {
+                spriteRenderer.flipX = false;
+            }
+        }
+        else
+        {
+            animator.SetBool("isDown", false);
+            isDown = false;
+        }
+        
+        if(Input.GetKeyUp(KeyCode.DownArrow) || rb.velocity.y < 0)
+        {
+            animator.SetBool("isDown", false);
+            isDown = false;
+        }
     }
 
     public void OnExit()
     {
+        animator.SetBool("isDown", false);
+        isDown = false;
         player.prevState = "IdleState";
     }
 
