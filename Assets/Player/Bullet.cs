@@ -24,7 +24,7 @@ public class Bullet : MonoBehaviour
             direction = Vector3.right;
         }
 
-        Destroy(gameObject, lifeTime);
+        Destroy(gameObject);
     }
 
     void Update()
