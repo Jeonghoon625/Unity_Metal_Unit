@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TitleSceneController : MonoBehaviour
 {
+    public SceneFade fade;
+
     private void Awake()
     {
         Application.runInBackground = true;
@@ -14,7 +16,12 @@ public class TitleSceneController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Return))
         {
-            SceneLoader.LoadScene("GameScene");
+            fade.isChanged = true;
+        }
+
+        if (fade.isEnd)
+        {
+            SceneLoader.LoadScene("ChatScene");
         }
     }
 }

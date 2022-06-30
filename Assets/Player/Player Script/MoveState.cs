@@ -125,6 +125,7 @@ public class MoveState : IState
                 jumpCount = 0;
                 isFall = false;
                 animator.SetBool("isFall", false);
+                animator.SetBool("isJump", false);
             }
         }
 
