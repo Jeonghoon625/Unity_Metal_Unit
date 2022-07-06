@@ -23,7 +23,7 @@ public class IdleState : IState
     {
         if (!isDown && (Input.GetAxisRaw("Horizontal") != 0 || Input.GetButtonDown("Jump")
             || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift) 
-            || rb.velocity.y < 0 || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift)))
+            || rb.velocity.y < 0 || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift) || player.joystick.GetAxisRaw("Horizontal") != 0) || player.jumpButton.isJumpButtonDown)
         {
             player.SetState("MoveState");
         }
@@ -38,11 +38,11 @@ public class IdleState : IState
             animator.SetBool("isDown", true);
             isDown = true;
 
-            if(Input.GetAxisRaw("Horizontal") == -1)
+            if(Input.GetAxisRaw("Horizontal") == -1 || player.joystick.GetAxisRaw("Horizontal") == -1)
             {
                 spriteRenderer.flipX = true;
             }
-            else if (Input.GetAxisRaw("Horizontal") == 1)
+            else if (Input.GetAxisRaw("Horizontal") == 1 || player.joystick.GetAxisRaw("Horizontal") == 1)
             {
                 spriteRenderer.flipX = false;
             }

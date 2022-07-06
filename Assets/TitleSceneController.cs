@@ -14,7 +14,7 @@ public class TitleSceneController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (Input.GetKeyDown(KeyCode.Return) || Input.touchCount > 0)
         {
             fade.isChanged = true;
         }

@@ -84,7 +84,7 @@ public class ChatSceneController : MonoBehaviour
 
         while (true)
         {
-            if(Input.GetKeyDown(KeyCode.Return))
+            if(Input.GetKeyDown(KeyCode.Return) || Input.touchCount > 0)
             {
                 break;
             }

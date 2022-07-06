@@ -150,6 +150,7 @@ public class MoveState : IState
         while (true)
         {
             axisX = Input.GetAxisRaw("Horizontal");
+            axisX = player.joystick.GetAxisRaw("Horizontal");
 
             if (axisX != 0)
             {
@@ -210,7 +211,7 @@ public class MoveState : IState
     {
         while (true)
         {
-            if (Input.GetButtonDown("Jump"))
+            if (Input.GetButtonDown("Jump") || player.jumpButton.isJumpButtonDown)
             {
                 jumpTimer = 0;
                 jumpCount--;
@@ -227,7 +228,7 @@ public class MoveState : IState
                 }
             }
 
-            if (Input.GetButton("Jump") && jumpTimer <= jumpTimeLimit && jumpCount >= -2)
+            if ((Input.GetButton("Jump") || player.jumpButton.isJumpButtonPressed) && jumpTimer <= jumpTimeLimit && jumpCount >= -2)
             {
                 rigid.velocity = Vector2.zero;
                 rigid.AddForce(Vector2.up * player.JumpPower, ForceMode2D.Impulse);

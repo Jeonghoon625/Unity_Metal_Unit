@@ -25,6 +25,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     float jumpPower = 0.3f;
 
+    public VirtualJoystick joystick;
+    public VirtualJumpButton jumpButton;
+
     public float WalkSpeed
     {
         get

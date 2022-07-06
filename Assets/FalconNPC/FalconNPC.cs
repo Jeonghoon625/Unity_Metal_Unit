@@ -12,6 +12,7 @@ public class FalconNPC : MonoBehaviour
 
     SpriteRenderer spriteRenderer;
 
+    public VirtualJoystick joystick;
     Vector3 dirX;
 
     private void Awake()
@@ -29,6 +30,7 @@ public class FalconNPC : MonoBehaviour
     {
 
         var hInput = Input.GetAxisRaw("Horizontal");
+        hInput = joystick.GetAxisRaw("Horizontal");
 
         if (hInput < 0)
         {

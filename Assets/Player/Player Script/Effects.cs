@@ -11,6 +11,8 @@ public class Effects : MonoBehaviour
 
     Vector3 dirX;
 
+    public VirtualJoystick joystick;
+
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -25,6 +27,7 @@ public class Effects : MonoBehaviour
     private void Update()
     {
         var hInput = Input.GetAxisRaw("Horizontal");
+        hInput = joystick.GetAxisRaw("Horizontal");
 
         if (hInput < 0)
         {
