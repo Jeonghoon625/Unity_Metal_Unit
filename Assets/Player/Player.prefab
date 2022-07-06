@@ -393,6 +393,7 @@ MonoBehaviour:
   RightUpPos: {fileID: 6584168212297295727}
   offsetVertical: 0.5
   SpeedY: 0.25
+  joystick: {fileID: 0}
 --- !u!1 &6584168212297295726
 GameObject:
   m_ObjectHideFlags: 0
@@ -608,6 +609,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LeftPos: {fileID: 6584168211654898430}
   RightPos: {fileID: 6584168213031023449}
+  joystick: {fileID: 0}
 --- !u!95 &6584168212867824587
 Animator:
   serializedVersion: 4
@@ -905,6 +907,8 @@ MonoBehaviour:
   direction: {x: 0, y: 0, z: 0}
   walkSpeed: 8
   jumpPower: 8
+  joystick: {fileID: 0}
+  jumpButton: {fileID: 0}
 --- !u!61 &6584168213104237596
 BoxCollider2D:
   m_ObjectHideFlags: 0
