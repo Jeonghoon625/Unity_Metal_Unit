@@ -4,39 +4,39 @@ using UnityEngine;
 
 public class Platform : MonoBehaviour
 {
-    bool isPlayer;
     PlatformEffector2D platFormGO;
+    public VirtualButton virtualButton;
+    public GameObject downButton;
+    public Player player;
 
     void Start()
     {
-        isPlayer = false;
-        platFormGO = GetComponent<PlatformEffector2D>();
+        platFormGO = this.gameObject.GetComponent<PlatformEffector2D>();
     }
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.S) && Input.GetKeyDown(KeyCode.DownArrow) && isPlayer)
-        {
-            platFormGO.rotationalOffset = 180f;
-        }
-        else if (Input.GetKeyDown(KeyCode.S) && Input.GetKey(KeyCode.DownArrow) && isPlayer)
-        {
-            platFormGO.rotationalOffset = 180f;
-        }
+        downButton.SetActive(player.inDownBlock);
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (player.inDownBlock)
         {
-            platFormGO.rotationalOffset = 0f;
+            if (Input.GetKey(KeyCode.S) && Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                platFormGO.rotationalOffset = 180f;
+            }
+            else if (Input.GetKeyDown(KeyCode.S) && Input.GetKey(KeyCode.DownArrow))
+            {
+                platFormGO.rotationalOffset = 180f;
+            }
+            else if (virtualButton.isDownButtonDown)
+            {
+                virtualButton.isDownButtonDown = false;
+                platFormGO.rotationalOffset = 180f;
+            }
+            else
+            {
+                platFormGO.rotationalOffset = 0f;
+            }
         }
-    }
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        isPlayer = collision.gameObject.CompareTag("Player");
-        
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        isPlayer = false;
     }
 }

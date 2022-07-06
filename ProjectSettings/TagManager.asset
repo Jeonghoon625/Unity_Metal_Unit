@@ -6,6 +6,7 @@ TagManager:
   tags:
   - FalconNPC
   - Monster
+  - DownBlock
   layers:
   - Default
   - TransparentFX

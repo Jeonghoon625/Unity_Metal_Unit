@@ -21,20 +21,25 @@ public class IdleState : IState
 
     public void OnUpdate()
     {
-        if (!isDown && (Input.GetAxisRaw("Horizontal") != 0 || Input.GetButtonDown("Jump")
+        if (!isDown && 
+            (Input.GetAxisRaw("Horizontal") != 0 || Input.GetButtonDown("Jump")
             || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift) 
-            || rb.velocity.y < 0 || Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift) || player.joystick.GetAxisRaw("Horizontal") != 0) || player.jumpButton.isJumpButtonDown)
+            || rb.velocity.y < 0 || player.joystick.GetAxisRaw("Horizontal") != 0 || player.virtualButton.isJumpButtonDown
+            || player.virtualButton.isDashButtonDown))
         {
             player.SetState("MoveState");
         }
         
+        /*
         if (Input.GetMouseButtonDown(1))
         {
            player.SetState("AttackState");
         }
+        */
 
-        if(Input.GetKey(KeyCode.DownArrow))
+        if(Input.GetKey(KeyCode.DownArrow) || player.virtualButton.isSitButtonPressed)
         {
+            Debug.Log("isSitButtonPressed");
             animator.SetBool("isDown", true);
             isDown = true;
 
@@ -46,6 +51,8 @@ public class IdleState : IState
             {
                 spriteRenderer.flipX = false;
             }
+
+            player.virtualButton.isSitButtonDown = false;
         }
         else
         {
@@ -53,9 +60,10 @@ public class IdleState : IState
             isDown = false;
         }
         
-        if(Input.GetKeyUp(KeyCode.DownArrow) || rb.velocity.y < 0)
+        if((Input.GetKeyUp(KeyCode.DownArrow) || player.virtualButton.isSitButtonUp) || rb.velocity.y < 0)
         {
             animator.SetBool("isDown", false);
+            player.virtualButton.isSitButtonUp = false;
             isDown = false;
         }
     }
@@ -69,6 +77,5 @@ public class IdleState : IState
 
     public void OnFixedUpdate()
     {
-
     }
 }

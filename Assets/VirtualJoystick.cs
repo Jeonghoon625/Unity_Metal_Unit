@@ -7,8 +7,6 @@ using UnityEngine.EventSystems;
 public class VirtualJoystick : MonoBehaviour, IDragHandler, IEndDragHandler
 {
     public Image point;
-    public Image button;
-    public Image button2;
 
     public float radius;
 
@@ -30,7 +28,7 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IEndDragHandler
 
     public float GetAxis(string axis)
     {
-        var dir = direction / radius;
+        var dir = direction.normalized;
 
         switch (axis)
         {

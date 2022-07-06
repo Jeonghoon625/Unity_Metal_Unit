@@ -51,6 +51,7 @@ public class MoveState : IState
 
     public void OnUpdate()
     {
+        /*
         if (Input.GetMouseButtonDown(1))
         {
             player.StopCoroutine(coWalk);
@@ -59,6 +60,7 @@ public class MoveState : IState
             animator.SetBool("isGround", true);
             player.SetState("AttackState");
         }
+        */
     }
 
     public void OnFixedUpdate()
@@ -150,7 +152,10 @@ public class MoveState : IState
         while (true)
         {
             axisX = Input.GetAxisRaw("Horizontal");
-            axisX = player.joystick.GetAxisRaw("Horizontal");
+            if(player.joystick.GetAxisRaw("Horizontal") != 0)
+            {
+                axisX = player.joystick.GetAxisRaw("Horizontal");
+            }
 
             if (axisX != 0)
             {
@@ -173,7 +178,7 @@ public class MoveState : IState
     {
         while (true)
         {
-            if (Input.GetKeyDown(KeyCode.LeftShift) && !isDash)
+            if ((Input.GetKeyDown(KeyCode.LeftShift) || player.virtualButton.isDashButtonDown) && !isDash)
             {
                 isDash = true;
 
@@ -187,6 +192,8 @@ public class MoveState : IState
                 }
 
                 rigid.velocity = Vector2.zero;
+
+                player.virtualButton.isDashButtonDown = false;
             }
 
             if(isDash)
@@ -211,7 +218,7 @@ public class MoveState : IState
     {
         while (true)
         {
-            if (Input.GetButtonDown("Jump") || player.jumpButton.isJumpButtonDown)
+            if (Input.GetButtonDown("Jump") || player.virtualButton.isJumpButtonDown)
             {
                 jumpTimer = 0;
                 jumpCount--;
@@ -226,9 +233,14 @@ public class MoveState : IState
                 {
                     GameObject.Instantiate(player.Effect_JumpOnAir_Prefab, player.EffectPos_Jump.transform.position, Quaternion.identity);
                 }
+
+                if(player.virtualButton.isJumpButtonDown)
+                {
+                    player.virtualButton.isJumpButtonDown = false;
+                }
             }
 
-            if ((Input.GetButton("Jump") || player.jumpButton.isJumpButtonPressed) && jumpTimer <= jumpTimeLimit && jumpCount >= -2)
+            if ((Input.GetButton("Jump") || player.virtualButton.isJumpButtonPressed) && jumpTimer <= jumpTimeLimit && jumpCount >= -2)
             {
                 rigid.velocity = Vector2.zero;
                 rigid.AddForce(Vector2.up * player.JumpPower, ForceMode2D.Impulse);

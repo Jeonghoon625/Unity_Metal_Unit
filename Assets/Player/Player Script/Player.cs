@@ -26,7 +26,7 @@ public class Player : MonoBehaviour
     float jumpPower = 0.3f;
 
     public VirtualJoystick joystick;
-    public VirtualJumpButton jumpButton;
+    public VirtualButton virtualButton;
 
     public float WalkSpeed
     {
@@ -85,5 +85,23 @@ public class Player : MonoBehaviour
         currentState = nextState;
         currentState.OnEnter(this);
         currentState.OnUpdate();
+    }
+
+    public bool inDownBlock = false;
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.CompareTag("DownBlock"))
+        {
+            inDownBlock = true;
+        }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("DownBlock"))
+        {
+            inDownBlock = false;
+        }
     }
 }
